@@ -2,17 +2,17 @@ import Navbar from "../components/Navbar";
 import "../styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
+import Loading from "../components/Loading";
 
-export default function App({
-  Component,
-  pageProps: { session, ...pageProps },
-}) {
+const App = ({ Component, pageProps: { session, loading, ...pageProps } }) => {
   return (
     <SessionProvider session={session}>
       <ThemeProvider enableSystem={true} attribute="class">
         <Navbar />
-        <Component {...pageProps} />
+        {loading ? <Loading /> : <Component {...pageProps} />}
       </ThemeProvider>
     </SessionProvider>
   );
-}
+};
+
+export default App;
