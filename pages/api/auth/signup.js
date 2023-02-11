@@ -1,4 +1,4 @@
-import { connectToDatabase } from "@/lib/mongodb";
+import { connectToDatabase } from "../../../lib/mongodb";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {

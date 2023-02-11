@@ -1,8 +1,10 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "next/link"; 
+import withAuth from "../../hoc/withAuth";
 
-const MovieDetail = ({ movies }) => {
+const MovieDetail = ({ movies }) => { 
   const imagePath = "https://image.tmdb.org/t/p/original";
+
   return (
     <div className=" mx-32 my-12">
       <h2 className="text-3xl text-rose-700 font-bold">{movies.title}</h2>
@@ -27,7 +29,7 @@ const MovieDetail = ({ movies }) => {
   );
 };
 
-export default MovieDetail;
+export default withAuth(MovieDetail);
 
 export async function getServerSideProps(context) {
   const { params } = context;
