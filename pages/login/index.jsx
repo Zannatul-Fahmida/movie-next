@@ -70,7 +70,7 @@ export default function Login() {
       </div>
       <div className="text-center">
         <p className="font-semibold">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             className="bg-rose-700 text-white py-1 px-1 font-normal rounded-sm"
             href="/signup"
