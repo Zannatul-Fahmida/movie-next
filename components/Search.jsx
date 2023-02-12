@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { ImSearch } from "react-icons/im";
 
-export default function Search() {
+export default function Search({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
+    onSearch(e.target.value);
   };
   return (
     <div className="flex justify-center md:justify-start">
