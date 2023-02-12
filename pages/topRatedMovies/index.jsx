@@ -1,15 +1,27 @@
+import { useState } from "react";
 import Movie from "../../components/Movie";
 import Search from "../../components/Search";
 
-const TopRatedMovies = ({movies}) => {
+const TopRatedMovies = ({ movies }) => {
+  const [filteredMovies, setFilteredMovies] = useState(movies.results);
+
+  const handleSearch = (query) => {
+    setFilteredMovies(
+      movies.results.filter(
+        (movie) =>
+          movie.title.toLowerCase().includes(query.toLowerCase()) ||
+          movie.release_date.includes(query)
+      )
+    );
+  };
   return (
     <main className="mx-8 md:mx-32 my-12">
       <h1 className="text-3xl text-center text-rose-700 font-bold mb-6">
         Top Rated Movies
       </h1>
-      <Search />
-      <div className="grid gap-16 grid-cols-fluid mt-6">
-        {movies?.results?.map((movie) => (
+      <Search onSearch={handleSearch} />
+      <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-6">
+        {filteredMovies?.map((movie) => (
           <Movie
             key={movie.id}
             id={movie.id}

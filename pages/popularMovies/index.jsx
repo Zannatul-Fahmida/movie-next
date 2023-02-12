@@ -2,7 +2,7 @@ import { useState } from "react";
 import Movie from "../../components/Movie";
 import Search from "../../components/Search";
 
-const PopularMovies = ({movies}) => {
+const PopularMovies = ({ movies }) => {
   const [filteredMovies, setFilteredMovies] = useState(movies.results);
 
   const handleSearch = (query) => {
@@ -20,7 +20,7 @@ const PopularMovies = ({movies}) => {
         Popular Movies
       </h1>
       <Search onSearch={handleSearch} />
-      <div className="grid gap-16 grid-cols-fluid mt-6">
+      <div className="grid gap-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-6">
         {filteredMovies?.map((movie) => (
           <Movie
             key={movie.id}
@@ -37,7 +37,9 @@ const PopularMovies = ({movies}) => {
 export default PopularMovies;
 
 export async function getServerSideProps() {
-  const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}`);
+  const res = await fetch(
+    `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}`
+  );
   const data = await res.json();
 
   return {
