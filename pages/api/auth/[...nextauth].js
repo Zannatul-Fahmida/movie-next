@@ -32,7 +32,6 @@ export default NextAuth({
     CredentialsProvider({
       name: "credentials",
       async authorize(credentials) {
-        console.log(credentials);
         const client = await connectToDatabase();
 
         const usersCollection = client.db().collection("users");
@@ -48,7 +47,7 @@ export default NextAuth({
           throw new Error("Wrong password");
         }
         client.close();
-        return { email: user.email };
+        return { name: user.name, email: user.email };
       },
     }),
   ],
