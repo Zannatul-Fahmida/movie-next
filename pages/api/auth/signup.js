@@ -3,7 +3,7 @@ import { connectToDatabase } from "../../../lib/mongodb";
 const handler = async (req, res) => {
   if (req.method === "POST") {
     const data = req.body.user;
-    const { name, email, password } = data;
+    const { name, email, password, image } = data;
 
     const client = await connectToDatabase();
 
@@ -24,6 +24,7 @@ const handler = async (req, res) => {
       name: name,
       email: email,
       password: password,
+      image: image
     });
 
     await client.close();

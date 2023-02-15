@@ -4,8 +4,10 @@ import { BsMoonFill, BsSunFill } from "react-icons/bs";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useState } from "react";
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -31,9 +33,7 @@ export default function Navbar() {
           className="hidden w-full md:flex md:items-center md:w-auto"
           id="menu"
         >
-          <ul
-            className="pt-4 text-base text-gray-700 md:flex md:justify-between md:pt-0 dark:text-white"
-          >
+          <ul className="pt-4 text-base text-gray-700 md:flex md:justify-between md:items-center md:pt-0 dark:text-white">
             <li>
               <Link
                 className={
@@ -93,13 +93,49 @@ export default function Navbar() {
               </li>
             )}
             {session && (
-              <li>
+              <li className="md:px-4 py-2">
                 <button
-                  className="md:p-4 py-2 block hover:text-rose-600 text-rose-700"
-                  onClick={signOut}
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="inline-flex justify-center rounded-full border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-rose-500"
                 >
-                  Sign Out
+                  <img
+                    className="w-10 h-10 rounded-full"
+                    src={session.user.image}
+                  />
                 </button>
+                {isOpen ? (
+                  <div className="origin-top-right absolute md:right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div
+                      className="py-1"
+                      role="menu"
+                      aria-orientation="vertical"
+                      aria-labelledby="options-menu"
+                    >
+                      <Link
+                        href="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        role="menuitem"
+                      >
+                        Your Profile
+                      </Link>
+                      <Link
+                        href="/"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        role="menuitem"
+                      >
+                        Settings
+                      </Link>
+                      <button
+                        className="w-full text-left px-4 py-2 block hover:text-rose-600 text-rose-700 text-sm hover:bg-gray-100"
+                        onClick={signOut}
+                        role="menuitem"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
               </li>
             )}
             <button

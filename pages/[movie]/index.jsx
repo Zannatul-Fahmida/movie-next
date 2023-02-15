@@ -14,7 +14,7 @@ const MovieDetail = ({ movies }) => {
         {movies.status}
       </h2>
       <Image
-        className="my-10 w-full"
+        className="my-6 w-full"
         width={1000}
         height={1000}
         src={imagePath + movies.backdrop_path}
