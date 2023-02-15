@@ -101,7 +101,11 @@ export default function Navbar() {
                 >
                   <img
                     className="w-10 h-10 rounded-full"
-                    src={session.user.image}
+                    src={
+                      session.user.image ||
+                      "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                    }
+                    alt="profile picture"
                   />
                 </button>
                 {isOpen ? (
@@ -113,18 +117,11 @@ export default function Navbar() {
                       aria-labelledby="options-menu"
                     >
                       <Link
-                        href="/profile"
+                        href="/dashboard"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                         role="menuitem"
                       >
-                        Your Profile
-                      </Link>
-                      <Link
-                        href="/"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                        role="menuitem"
-                      >
-                        Settings
+                        Dashboard
                       </Link>
                       <button
                         className="w-full text-left px-4 py-2 block hover:text-rose-600 text-rose-700 text-sm hover:bg-gray-100"
