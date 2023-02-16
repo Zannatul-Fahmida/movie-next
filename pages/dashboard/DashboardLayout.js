@@ -12,8 +12,8 @@ const DashboardLayout = ({ children }) => {
             href="/dashboard"
             className={
               pathname === "/dashboard"
-                ? "px-2 py-2 w-full text-gray-700 text-rose-700 font-bold"
-                : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100"
+                ? "px-2 py-2 w-full text-rose-700 font-bold"
+                : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100 dark:text-gray-200 dark:hover:text-gray-700"
             }
           >
             Dashboard
@@ -21,22 +21,22 @@ const DashboardLayout = ({ children }) => {
           <Link
             href="/dashboard/profile"
             className={
-                pathname === "/dashboard/profile"
-                  ? "px-2 py-2 w-full text-gray-700 text-rose-700 font-bold"
-                  : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100"
-              }
+              pathname === "/dashboard/profile"
+                ? "px-2 py-2 w-full text-rose-700 font-bold"
+                : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100 dark:text-gray-200 dark:hover:text-gray-700"
+            }
           >
             Profile
           </Link>
           <Link
-            href="/dashboard/settings"
+            href="/dashboard/review"
             className={
-                pathname === "/dashboard/settings"
-                  ? "px-2 py-2 w-full text-gray-700 text-rose-700 font-bold"
-                  : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100"
-              }
+              pathname === "/dashboard/review"
+                ? "px-2 py-2 w-full text-rose-700 font-bold"
+                : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100 dark:text-gray-200 dark:hover:text-gray-700"
+            }
           >
-            Settings
+            Review
           </Link>
         </nav>
       </div>

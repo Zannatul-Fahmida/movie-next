@@ -67,7 +67,6 @@ export default function Login() {
               {...register("password", { required: true })}
             />
             {errors.password && <span>This field is required</span>}
-            {errors.confirmPassword && <span>This field is required</span>}
             <button
               className="bg-rose-700 mt-1 rounded-md text-white py-2"
               type="submit"
