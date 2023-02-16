@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import withAuth from "../../hoc/withAuth";
 
 const DashboardLayout = ({ children }) => {
   const pathname = usePathname();
   return (
     <div className="flex flex-col md:flex-row overflow-y-hidden">
-      <div className="bg-slate-100 h-16 md:h-screen w-full md:w-1/5">
+      <div className="bg-slate-100 h-16 md:h-screen w-full md:w-1/5 dark:bg-zinc-900">
         <nav className="flex flex-row md:flex-col justify-between items-center md:justify-start h-full px-4 md:px-0 md:my-2">
           <Link
             href="/dashboard"
@@ -44,4 +45,4 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default withAuth(DashboardLayout);

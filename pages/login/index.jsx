@@ -4,25 +4,34 @@ import { SlLogin } from "react-icons/sl";
 import Social from "../../components/Social";
 import { signIn } from "next-auth/react";
 import { toast, Toaster } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 export default function Login() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    const login = signIn("credentials", {
-      redirect: true,
-      callbackUrl: "/",
-      email: data.email,
-      password: data.password,
-      url: "/login",
-    });
-    if (login) {
-      reset();
-      toast.success("Successfully logged in");
+  const onSubmit = async (data) => {
+    try {
+      const login = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+      if (!login?.error) {
+        reset();
+        toast.success("Successfully logged in");
+        router.push("/dashboard");
+      } else {
+        console.log(login);
+        throw new Error(login.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
     }
   };
 

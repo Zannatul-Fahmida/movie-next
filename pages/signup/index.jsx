@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast, Toaster } from "react-hot-toast";
 import { SlLogin } from "react-icons/sl";
+import { useRouter } from "next/router";
 
 export default function Signup() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -14,9 +16,10 @@ export default function Signup() {
   } = useForm();
   const onSubmit = async (user) => {
     if (user.password !== user.confirmPassword) {
-      toast.error("passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
+
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: {
@@ -26,18 +29,25 @@ export default function Signup() {
     });
 
     const userData = await res.json();
+
     if (!userData.userId) {
       toast.error(userData.message);
     } else {
-      toast.success(userData.message);
-      reset();
-      signIn("credentials", {
-        redirect: true,
-        callbackUrl: "/",
+      const signInRes = await signIn("credentials", {
+        redirect: false,
         email: user.email,
         password: user.password,
-        url: "/signup"
+        url: "/signup",
       });
+
+      if (signInRes.error) {
+        toast.error(signInRes.error);
+      } else {
+        toast.success("Successfully registered and logged in");
+        reset();
+        // Redirect to dashboard or other protected pages if necessary
+        router.push("/dashboard");
+      }
     }
   };
 
