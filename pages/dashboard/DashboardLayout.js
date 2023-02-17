@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Loading from "../../components/Loading";
 import withAuth from "../../hoc/withAuth";
+import { useSession } from "next-auth/react";
 
 const DashboardLayout = ({ children }) => {
+  const { data: session } = useSession();
   const pathname = usePathname();
+  if (!session) {
+    return <Loading />;
+  }
   return (
     <div className="flex flex-col md:flex-row overflow-y-hidden">
       <div className="bg-slate-100 h-16 md:h-screen w-full md:w-1/5 dark:bg-zinc-900">
@@ -50,7 +56,11 @@ const DashboardLayout = ({ children }) => {
           </Link>
         </nav>
       </div>
-      <div className="w-full md:w-4/5">{children}</div>
+      {!session ? (
+        <Loading />
+      ) : (
+        <div className="w-full md:w-4/5">{children}</div>
+      )}
     </div>
   );
 };
