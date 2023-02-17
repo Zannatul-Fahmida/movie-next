@@ -38,6 +38,16 @@ const DashboardLayout = ({ children }) => {
           >
             Review
           </Link>
+          <Link
+            href="/dashboard/myReviews"
+            className={
+              pathname === "/dashboard/myReviews"
+                ? "px-2 py-2 w-full text-rose-700 font-bold"
+                : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100 dark:text-gray-200 dark:hover:text-gray-700"
+            }
+          >
+            My Reviews
+          </Link>
         </nav>
       </div>
       <div className="w-full md:w-4/5">{children}</div>

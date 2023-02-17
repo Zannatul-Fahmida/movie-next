@@ -10,12 +10,7 @@ const Review = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: `${session.user.name}`,
-      email: `${session.user.email}`,
-    },
-  });
+  } = useForm();
   const onSubmit = async (data) => {
     try {
       const res = await fetch("/api/review", {
@@ -37,11 +32,14 @@ const Review = () => {
     <DashboardLayout>
       <div className="p-10">
         <Toaster />
-        <h2 className="text-2xl font-bold text-rose-700 mb-2">Give Review Here</h2>
+        <h2 className="text-2xl font-bold text-rose-700 mb-2">
+          Give Review Here
+        </h2>
         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
           <input
             className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-500 dark:bg-zinc-300 dark:text-black
   focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            placeholder={session.user.name}
             type="text"
             {...register("name")}
             disabled
@@ -49,6 +47,7 @@ const Review = () => {
           <input
             className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-500 dark:bg-zinc-300 dark:text-black
     focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            placeholder={session.user.email}
             type="email"
             {...register("email")}
             disabled
