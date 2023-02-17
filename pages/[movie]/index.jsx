@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import Rating from "react-rating";
 import withAuth from "../../hoc/withAuth";
 import { connectToDatabase } from "../../lib/mongodb";
+import {AiFillStar} from "react-icons/ai"
 
 const MovieDetail = ({ movies, reviews }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
@@ -25,13 +27,25 @@ const MovieDetail = ({ movies, reviews }) => {
       <p className="mb-6">{movies.overview}</p>
       {reviews.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-lg font-bold">Reviews:</h3>
+          <h3 className="text-lg font-bold mb-2">Reviews:</h3>
           <div className="grid grid-cols-5 gap-2">
             {reviews.map((review) => (
-              <div key={review._id} className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <p>{review.name}</p>
-                <p>{review.description}</p>
-                <p>{review.rating}</p>
+              <div
+                key={review._id}
+                className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+              >
+              <p className="text-lg">{review.description}</p>
+                <Rating
+                initialRating={review.rating}
+                  emptySymbol={
+                    <AiFillStar className="icon" />
+                  }
+                  fullSymbol={
+                    <AiFillStar className="icon text-yellow-500" />
+                  }
+                  readonly
+                />
+                <p className="text-sm">{review.name}</p>
               </div>
             ))}
           </div>

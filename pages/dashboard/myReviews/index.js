@@ -17,7 +17,7 @@ const MyReviews = ({ reviews }) => {
                   Name
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Description
+                  Review
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Rating
