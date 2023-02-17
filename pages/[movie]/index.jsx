@@ -1,8 +1,9 @@
 import Image from "next/image";
-import Link from "next/link"; 
+import Link from "next/link";
 import withAuth from "../../hoc/withAuth";
+import { connectToDatabase } from "../../lib/mongodb";
 
-const MovieDetail = ({ movies }) => { 
+const MovieDetail = ({ movies, reviews }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
 
   return (
@@ -22,6 +23,20 @@ const MovieDetail = ({ movies }) => {
         priority
       />
       <p className="mb-6">{movies.overview}</p>
+      {reviews.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-lg font-bold">Reviews:</h3>
+          <div className="grid grid-cols-5 gap-2">
+            {reviews.map((review) => (
+              <div key={review._id} className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <p>{review.name}</p>
+                <p>{review.description}</p>
+                <p>{review.rating}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <Link className="bg-rose-700 text-white px-4 py-2 rounded-md" href="/">
         <button>Back To Home</button>
       </Link>
@@ -39,9 +54,17 @@ export async function getServerSideProps(context) {
   );
   const data = await res.json();
 
+  const client = await connectToDatabase();
+  const db = client.db();
+  const reviews = await db
+    .collection("reviews")
+    .find({ movieName: data.title })
+    .toArray();
+
   return {
     props: {
       movies: data,
+      reviews: JSON.parse(JSON.stringify(reviews)),
     },
   };
 }
