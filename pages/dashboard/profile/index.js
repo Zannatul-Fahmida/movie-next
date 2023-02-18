@@ -6,6 +6,7 @@ import EditProfile from "../../../components/EditProfile";
 const Profile = () => {
   const { data: session } = useSession();
   const [edit, setEdit] = useState(false);
+  console.log(session);
   return (
     <DashboardLayout>
       <div className="p-10 flex flex-col items-center justify-center">

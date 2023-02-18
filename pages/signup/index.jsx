@@ -19,7 +19,7 @@ export default function Signup() {
       toast.error("Passwords do not match");
       return;
     }
-
+    user.image = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: {

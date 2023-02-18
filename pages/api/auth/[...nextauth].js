@@ -47,7 +47,7 @@ export default NextAuth({
           throw new Error("Incorrect password");
         }
         await client.close();
-        return { user: user };
+        return { name: user.name, email: user.email, image: user.image };
       },
     }),
   ],

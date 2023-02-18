@@ -32,13 +32,13 @@ const MovieDetail = ({ movies, reviews }) => {
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                className="block max-w-sm p-3 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
               >
               <p className="text-lg">{review.description}</p>
                 <Rating
                 initialRating={review.rating}
                   emptySymbol={
-                    <AiFillStar className="icon" />
+                    <AiFillStar className="icon text-slate-300" />
                   }
                   fullSymbol={
                     <AiFillStar className="icon text-yellow-500" />
@@ -46,6 +46,7 @@ const MovieDetail = ({ movies, reviews }) => {
                   readonly
                 />
                 <p className="text-sm">{review.name}</p>
+                <p className="text-xs">{new Date(review.created).toLocaleString()}</p>
               </div>
             ))}
           </div>
