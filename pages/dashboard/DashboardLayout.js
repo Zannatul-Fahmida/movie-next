@@ -54,6 +54,16 @@ const DashboardLayout = ({ children }) => {
           >
             My Reviews
           </Link>
+          <Link
+            href="/dashboard/watchList"
+            className={
+              pathname === "/dashboard/watchList"
+                ? "px-2 py-2 w-full text-rose-700 font-bold"
+                : "px-2 py-2 w-full text-gray-700 hover:bg-rose-100 dark:text-gray-200 dark:hover:text-gray-700"
+            }
+          >
+            Watch List
+          </Link>
         </nav>
       </div>
       {!session ? (
