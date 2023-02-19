@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Movie from "../../components/Movie";
 import Search from "../../components/Search";
+import Link from "next/link";
 
 const TopRatedMovies = ({ movies }) => {
   const [filteredMovies, setFilteredMovies] = useState(movies.results);
@@ -14,6 +15,24 @@ const TopRatedMovies = ({ movies }) => {
       )
     );
   };
+  const handleWatchList = async ({ movieName, poster, releaseDate }) => {
+    try {
+      const res = await fetch("/api/watchlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          movieName,
+          poster,
+          releaseDate,
+        }),
+      });
+      const list = await res.json();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
     <main className="mx-8 md:mx-32 my-12">
       <h1 className="text-3xl text-center text-rose-700 font-bold mb-6">
@@ -22,13 +41,23 @@ const TopRatedMovies = ({ movies }) => {
       <Search onSearch={handleSearch} />
       <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-6">
         {filteredMovies?.map((movie) => (
-          <Movie
+          <Link
             key={movie.id}
-            id={movie.id}
-            title={movie.title}
-            poster_path={movie.poster_path}
-            release_date={movie.release_date}
-          />
+            href={`/movies/${movie.id}?category=topRatedMovies`}
+            onClick={() =>
+              handleWatchList({
+                movieName: movie.title,
+                poster: movie.poster_path,
+                releaseDate: movie.release_date,
+              })
+            }
+          >
+            <Movie
+              title={movie.title}
+              poster_path={movie.poster_path}
+              release_date={movie.release_date}
+            />
+          </Link>
         ))}
       </div>
     </main>

@@ -1,19 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
 import Rating from "react-rating";
-import withAuth from "../../hoc/withAuth";
-import { connectToDatabase } from "../../lib/mongodb";
+import withAuth from "../../../hoc/withAuth";
+import { connectToDatabase } from "../../../lib/mongodb";
 import { AiFillStar } from "react-icons/ai";
-import RelatedMovie from "../../components/RelatedMovie";
+import RelatedMovie from "../../../components/RelatedMovie";
 
 const MovieDetail = ({ movies, reviews, relatedMovies }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
 
   return (
     <div className="mx-4 my-4 md:mx-32 md:my-12">
-      <h2 className="text-3xl text-rose-700 font-bold">{movies.title}</h2>
-      <h2 className="text-lg">{movies.release_date}</h2>
-      <h2>Runtime: {movies.runtime} minutes</h2>
+      <h2 className="text-3xl text-rose-700 font-bold">
+        {movies.title ? movies.title : movies.name}
+      </h2>
+      {movies.release_date ? (
+        <h2 className="text-lg">Release Date: {movies.release_date}</h2>
+      ) : (
+        <h2 className="text-lg">First Air Date: {movies.first_air_date}</h2>
+      )}
+      {movies.number_of_episodes && (
+        <h2>Total Episodes: {movies.number_of_episodes} episodes</h2>
+      )}
+      {movies.runtime && <h2>Runtime: {movies.runtime} minutes</h2>}
       <h2 className="bg-green-600 inline-block my-2 py-2 px-4 text-white rounded-md text-sm">
         {movies.status}
       </h2>
@@ -22,7 +31,7 @@ const MovieDetail = ({ movies, reviews, relatedMovies }) => {
         width={1000}
         height={1000}
         src={imagePath + movies.backdrop_path}
-        alt={movies.title}
+        alt={movies.title ? movies.title : movies.name}
         priority
       />
       <p className="mb-6">{movies.overview}</p>
@@ -62,11 +71,16 @@ const MovieDetail = ({ movies, reviews, relatedMovies }) => {
 export default withAuth(MovieDetail);
 
 export async function getServerSideProps(context) {
-  const { params } = context;
+  const { params, query } = context;
   const movie = params.movie;
-  const res = await fetch(
-    `https://api.themoviedb.org/3/movie/${movie}?api_key=${process.env.API_KEY}`
-  );
+  const category = query.category;
+  let apiURL;
+  if (category === "popularMovies" || category === "topRatedMovies") {
+    apiURL = `https://api.themoviedb.org/3/movie/${movie}?api_key=${process.env.API_KEY}`;
+  } else if (category === "popularShows" || category === "topRatedShows") {
+    apiURL = `https://api.themoviedb.org/3/tv/${movie}?api_key=${process.env.API_KEY}`;
+  }
+  const res = await fetch(apiURL);
   const data = await res.json();
 
   const client = await connectToDatabase();
@@ -75,16 +89,24 @@ export async function getServerSideProps(context) {
     .collection("reviews")
     .find({ movieName: data.title })
     .toArray();
-  const related = await fetch(
-    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.API_KEY}&with_genres=${data.genres[0].name}`
-  );
+  let relatedURL;
+  if (category === "popularMovies") {
+    relatedURL = `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}&with_genres=${data?.genres[0]?.name}`;
+  } else if (category === "topRatedMovies") {
+    relatedURL = `https://api.themoviedb.org/3/movie/top_rated?api_key=${process.env.API_KEY}&with_genres=${data?.genres[0]?.name}`;
+  } else if (category === "popularShows") {
+    relatedURL = `https://api.themoviedb.org/3/tv/popular?api_key=${process.env.API_KEY}&with_genres=${data?.genres[0]?.name}`;
+  } else if (category === "topRatedShows") {
+    relatedURL = `https://api.themoviedb.org/3/tv/top_rated?api_key=${process.env.API_KEY}&with_genres=${data?.genres[0]?.name}`;
+  }
+  const related = await fetch(relatedURL);
   const relatedMovies = await related.json();
 
   return {
     props: {
       movies: data,
       reviews: JSON.parse(JSON.stringify(reviews)),
-      relatedMovies: JSON.parse(JSON.stringify(relatedMovies)),
+      relatedMovies: relatedMovies,
     },
   };
 }
