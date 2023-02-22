@@ -8,11 +8,12 @@ import RelatedMovie from "../../../components/RelatedMovie";
 
 const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
+  console.log(movies);
 
   return (
     <div className="mx-4 my-4 md:mx-32 md:my-12">
       <h2 className="text-3xl text-rose-700 font-bold">
-        {movies.title ? movies.title : movies.name}
+        {movies.title ? movies.title : movies.name} | {movies.original_language}
       </h2>
       {movies.release_date ? (
         <h2 className="text-lg">Release Date: {movies.release_date}</h2>
@@ -26,6 +27,7 @@ const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
       <h2 className="bg-green-600 inline-block my-2 py-2 px-4 text-white rounded-md text-sm">
         {movies.status}
       </h2>
+      <a className="block text-xl font-bold text-center" href={movies.homepage}>Watch trailer here</a>
       <Image
         className="my-6 w-full"
         width={1000}

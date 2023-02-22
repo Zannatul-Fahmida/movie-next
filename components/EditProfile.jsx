@@ -46,7 +46,7 @@ const EditProfile = () => {
           className="bg-rose-700 mt-1 rounded-md text-white py-2"
           type="submit"
         >
-          Edit
+          Submit
         </button>
       </form>
     </div>
