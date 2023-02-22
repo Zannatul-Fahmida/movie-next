@@ -8,7 +8,6 @@ import RelatedMovie from "../../../components/RelatedMovie";
 
 const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
-  console.log(movies);
 
   return (
     <div className="mx-4 my-4 md:mx-32 md:my-12">
