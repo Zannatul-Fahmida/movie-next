@@ -6,7 +6,7 @@ import { connectToDatabase } from "../../../lib/mongodb";
 import { AiFillStar } from "react-icons/ai";
 import RelatedMovie from "../../../components/RelatedMovie";
 
-const MovieDetail = ({ movies, reviews, relatedMovies }) => {
+const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
 
   return (
@@ -63,7 +63,7 @@ const MovieDetail = ({ movies, reviews, relatedMovies }) => {
       <Link className="bg-rose-700 text-white px-4 py-2 rounded-md" href="/">
         <button>Back To Home</button>
       </Link>
-      <RelatedMovie relatedMovies={relatedMovies} />
+      <RelatedMovie relatedMovies={relatedMovies} query={query} />
     </div>
   );
 };
@@ -107,6 +107,7 @@ export async function getServerSideProps(context) {
       movies: data,
       reviews: JSON.parse(JSON.stringify(reviews)),
       relatedMovies: relatedMovies,
+      query: query.category,
     },
   };
 }

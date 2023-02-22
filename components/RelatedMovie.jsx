@@ -1,15 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const RelatedMovie = ({ relatedMovies }) => {
+const RelatedMovie = ({ relatedMovies, query }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
   const relatedMovie = relatedMovies?.results?.slice(0, 5);
-  console.log(relatedMovie);
   return (
     <div className="grid gap-2 md:grid-cols-5 mt-8">
       {relatedMovie?.map((movie) => (
         <div key={movie.id}>
-          <Link href={`${movie.id}`}>
+          <Link href={`${movie.id}?category=${query}`}>
             <Image
               className="w-full"
               width={200}
