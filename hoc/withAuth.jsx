@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 export default function withAuth(WrappedComponent) {
   return function ProtectedRoute(props) {
     const { data: session, loading } = useSession();
-    console.log(session);
 
     if (loading) {
       return <Loading />;

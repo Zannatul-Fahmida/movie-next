@@ -1,9 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 
+const shuffleMovies = (movie) => {
+  for (let i = movie.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [movie[i], movie[j]] = [movie[j], movie[i]];
+  }
+  return movie;
+};
+
 const RelatedMovie = ({ relatedMovies, query }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
-  const relatedMovie = relatedMovies?.results?.slice(0, 5);
+  const relatedMovie = shuffleMovies(relatedMovies?.results).slice(0, 5);
   return (
     <div className="grid gap-2 md:grid-cols-5 mt-8">
       {relatedMovie?.map((movie) => (

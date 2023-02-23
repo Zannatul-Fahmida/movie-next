@@ -1,9 +1,6 @@
-import { useSession } from "next-auth/react";
 import DashboardLayout from "./DashboardLayout";
 
 const Dashboard = () => {
-  const {data: session} = useSession();
-  console.log(session);
   return (
     <DashboardLayout>
       <div className="p-10">
