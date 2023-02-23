@@ -5,7 +5,10 @@ import LinkedInProvider from "next-auth/providers/linkedin";
 import FacebookProvider from "next-auth/providers/facebook";
 import CredentialsProvider from "next-auth/providers/credentials";
 import DiscordProvider from "next-auth/providers/discord";
-import { connectToDatabase } from "../../../lib/mongodb";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import clientPromise from "../../../lib/mongodb";
+import { MongoClient } from "mongodb";
+import jwt from "jsonwebtoken";
 
 export default NextAuth({
   providers: [
@@ -32,9 +35,14 @@ export default NextAuth({
     CredentialsProvider({
       name: "credentials",
       async authorize(credentials) {
-        const client = await connectToDatabase();
+        const uri = process.env.MONGODB_URI;
+        const client = await MongoClient.connect(uri, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+        const db = client.db();
 
-        const usersCollection = client.db().collection("users");
+        const usersCollection = db.collection("users");
         const user = await usersCollection.findOne({
           email: credentials.email,
         });
@@ -46,10 +54,37 @@ export default NextAuth({
           await client.close();
           throw new Error("Incorrect password");
         }
+
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+          expiresIn: "1d",
+        });
+
         await client.close();
-        return { name: user.name, email: user.email, image: user.image };
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          token: token,
+        };
       },
     }),
   ],
+  adapter: MongoDBAdapter(clientPromise, {
+    databaseName: "movieNext",
+  }),
+  session: {
+    strategy: "jwt",
+  },
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    jwt: async ({ token, user }) => {
+      user && (token.user = user);
+      return token;
+    },
+    session: async ({ session, token }) => {
+      session.user = token.user;  
+      return session;
+    },
+  },
 });

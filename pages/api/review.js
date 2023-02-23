@@ -1,8 +1,8 @@
-import { connectToDatabase } from "../../lib/mongodb";
+import { MongoClient } from "mongodb";
 import { getSession } from "next-auth/react";
 
 export default async function handler(req, res) {
-   if (req.method === "POST") {
+  if (req.method === "POST") {
     const session = await getSession({ req });
 
     if (!session) {
@@ -11,13 +11,16 @@ export default async function handler(req, res) {
     }
 
     const { movieName, description, rating } = req.body.data;
-    console.log(movieName, description, rating);
 
     if (!movieName || !rating) {
       res.status(400).send({ message: "Movie name and rating are required" });
       return;
     }
-    const client = await connectToDatabase();
+    const uri = process.env.MONGODB_URI;
+    const client = await MongoClient.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
     const db = client.db();
 

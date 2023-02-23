@@ -1,4 +1,4 @@
-import { connectToDatabase } from "../../../lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 import DashboardLayout from "../DashboardLayout";
 import { getSession } from "next-auth/react";
 import Image from "next/image";
@@ -109,8 +109,8 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const client = await connectToDatabase();
-  const db = client.db();
+  const client = await clientPromise;
+  const db = client.db("movieNext");
   const lists = await db
     .collection("watchlist")
     .find({ email: session.user.email })

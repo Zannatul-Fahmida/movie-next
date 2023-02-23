@@ -102,8 +102,7 @@ export default function Navbar() {
                   <img
                     className="w-10 h-10 rounded-full"
                     src={
-                      session.user.image ||
-                      "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                      session?.user?.image
                     }
                     alt="profile picture"
                   />

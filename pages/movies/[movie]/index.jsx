@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Rating from "react-rating";
 import withAuth from "../../../hoc/withAuth";
-import { connectToDatabase } from "../../../lib/mongodb";
 import { AiFillStar } from "react-icons/ai";
 import RelatedMovie from "../../../components/RelatedMovie";
+import clientPromise from "../../../lib/mongodb";
 
 const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
@@ -84,8 +84,8 @@ export async function getServerSideProps(context) {
   const res = await fetch(apiURL);
   const data = await res.json();
 
-  const client = await connectToDatabase();
-  const db = client.db();
+  const client = await clientPromise;
+  const db = client.db("movieNext");
   const reviews = await db
     .collection("reviews")
     .find({ movieName: data.title })

@@ -1,6 +1,6 @@
 import DashboardLayout from "../DashboardLayout";
-import { connectToDatabase } from "../../../lib/mongodb";
 import { getSession } from "next-auth/react";
+import clientPromise from "../../../lib/mongodb";
 
 const MyReviews = ({ reviews }) => {
   return (
@@ -65,8 +65,8 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const client = await connectToDatabase();
-  const db = client.db();
+  const client = await clientPromise;
+  const db = client.db("movieNext");
   const reviews = await db
     .collection("reviews")
     .find({ email: session.user.email })
