@@ -124,7 +124,7 @@ export default function Navbar() {
                       </Link>
                       <button
                         className="w-full text-left px-4 py-2 block hover:text-rose-600 text-rose-700 text-sm hover:bg-gray-100"
-                        onClick={signOut}
+                        onClick={()=>signOut({callbackUrl: '/login'})}
                         role="menuitem"
                       >
                         Sign Out
