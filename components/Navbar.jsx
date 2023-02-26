@@ -4,13 +4,24 @@ import { BsMoonFill, BsSunFill } from "react-icons/bs";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [themeLoaded, setThemeLoaded] = useState(false);
+
+  useEffect(() => {
+    if (resolvedTheme != null) {
+      setThemeLoaded(true);
+    }
+  }, [resolvedTheme]);
+
+  if (!themeLoaded) {
+    return null; 
+  }
   const handleNav = () => {
     menu.classList.toggle("hidden");
   };
@@ -135,9 +146,9 @@ export default function Navbar() {
               </li>
             )}
             <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
             >
-              {theme === "dark" ? (
+              {resolvedTheme === "dark" ? (
                 <BsMoonFill className="text-white w-5 h-5" />
               ) : (
                 <BsSunFill className="text-yellow-500 w-5 h-5" />

@@ -1,17 +1,29 @@
-import styles from "../styles/Banner.module.css";
-import { AiOutlineArrowRight } from "react-icons/ai";
-import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { AiOutlineArrowRight } from "react-icons/ai";
+import styles from "../styles/Banner.module.css";
 
 export default function Banner() {
   const { data: session } = useSession();
-  const { theme } = useTheme();
-  console.log(theme);
+  const { resolvedTheme } = useTheme();
+  const [themeLoaded, setThemeLoaded] = useState(false);
+
+  useEffect(() => {
+    if (resolvedTheme != null) {
+      setThemeLoaded(true);
+    }
+  }, [resolvedTheme]);
+
+  if (!themeLoaded) {
+    return null; 
+  }
+
   return (
     <div
       className={`${
-        theme === "dark" ? styles.bannerBgDark : styles.bannerBg
+        resolvedTheme === "dark" ? styles.bannerBgDark : styles.bannerBg
       } flex items-center`}
     >
       <div
@@ -38,3 +50,4 @@ export default function Banner() {
     </div>
   );
 }
+
