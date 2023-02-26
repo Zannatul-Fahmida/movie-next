@@ -12,7 +12,7 @@ export default function withAuth(WrappedComponent) {
     if (loading) {
       return <Loading />;
     } else if (!session) {
-      return router.push(`/login?redirect=${router.asPath}`);
+      return <Login />;
     }
 
     return <WrappedComponent {...props} />;
