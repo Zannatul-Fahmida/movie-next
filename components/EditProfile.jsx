@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast, Toaster } from "react-hot-toast";
 import Compressor from "compressorjs";
 
 const EditProfile = () => {
-  const { data: session } = useSession({ setLoadingAfterInit: false });
+  const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -25,37 +25,46 @@ const EditProfile = () => {
     setIsSubmitting(true);
     try {
       const imageFile = data.image[0];
-      const imageBase64 = await new Promise((resolve, reject) => {
+      const compressedImage = await new Promise((resolve, reject) => {
         new Compressor(imageFile, {
-          quality: 0.6, // adjust the quality to your liking
+          quality: 0.6, 
           success: (result) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(result);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
+            resolve(result);
           },
           error: (error) => {
             reject(error);
           },
         });
       });
-      const res = await fetch(`/api/user/${session.user.id}`, {
+      const formData = new FormData();
+      formData.append("image", compressedImage);
+      const imgBbUrl = `https://api.imgbb.com/1/upload?expiration=600&key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`;
+
+      const res = await fetch(imgBbUrl, {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await res.json();
+      const imageLink = json.data.url;
+
+      const res2 = await fetch(`/api/user/${session.user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: data.name,
-          image: imageBase64,
+          image: imageLink,
         }),
       });
-      const updatedUser = await res.json();
+      const updatedUser = await res2.json();
       reset({
         name: updatedUser.name,
         email: updatedUser.email,
-        image: updatedUser.image,
       });
       toast.success("Your profile updated");
+      signOut({ callbackUrl: "/login" });
     } catch (error) {
       toast.error(error.message);
     } finally {

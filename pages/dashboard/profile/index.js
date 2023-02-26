@@ -5,7 +5,6 @@ import EditProfile from "../../../components/EditProfile";
 
 const Profile = () => {
   const { data: session } = useSession();
-  console.log(session);
   const [edit, setEdit] = useState(false);
   return (
     <DashboardLayout>

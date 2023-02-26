@@ -2,11 +2,13 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { SlLogin } from "react-icons/sl";
 import Social from "../../components/Social";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function Login() {
+  const { data: session } = useSession();
   const router = useRouter();
   const {
     register,
@@ -24,7 +26,8 @@ export default function Login() {
       if (!login?.error) {
         reset();
         toast.success("Successfully logged in");
-        router.push("/dashboard");
+        const redirect = router.query.redirect || "/dashboard";
+        router.push(redirect);
       } else {
         console.log(login);
         throw new Error(login.error);
