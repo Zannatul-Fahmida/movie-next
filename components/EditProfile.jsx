@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast, Toaster } from "react-hot-toast";
+import Compressor from "compressorjs";
 
 const EditProfile = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession({ setLoadingAfterInit: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -25,10 +26,18 @@ const EditProfile = () => {
     try {
       const imageFile = data.image[0];
       const imageBase64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(imageFile);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
+        new Compressor(imageFile, {
+          quality: 0.6, // adjust the quality to your liking
+          success: (result) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(result);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+          },
+          error: (error) => {
+            reject(error);
+          },
+        });
       });
       const res = await fetch(`/api/user/${session.user.id}`, {
         method: "PUT",
