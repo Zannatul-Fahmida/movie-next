@@ -10,7 +10,7 @@ const Profile = () => {
     <DashboardLayout>
       <div className="p-10 flex flex-col items-center justify-center">
         <img
-          className="w-full md:w-52 rounded-full"
+          className="w-full md:w-52 rounded-md"
           src={session?.user?.image} 
           alt="Profile Image"
         />

@@ -4,8 +4,13 @@ import { getSession } from "next-auth/react";
 import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 import { useState } from "react";
+import ReviewModal from "../../../components/reviewModal";
 
 const WatchList = ({ initialLists }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState({})
+
   const imagePath = "https://image.tmdb.org/t/p/original";
   const [lists, setLists] = useState(initialLists);
   const handleDelete = async (id) => {
@@ -28,11 +33,21 @@ const WatchList = ({ initialLists }) => {
       toast.error(error.message);
     }
   };
+  const handleOpenModal = (movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
 
   return (
     <DashboardLayout>
       <div className="p-10">
         <Toaster />
+        {isModalOpen && (
+          <ReviewModal
+            movieName={selectedMovie.movieName}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
         <h2 className="text-2xl font-bold text-rose-700 mb-2">
           My Watch Lists Are Here
         </h2>
@@ -51,6 +66,9 @@ const WatchList = ({ initialLists }) => {
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Date & Time
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Review
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Action
@@ -76,6 +94,20 @@ const WatchList = ({ initialLists }) => {
                   <td className="px-6 py-4">{list.releaseDate}</td>
                   <td className="px-6 py-4">
                     {new Date(list.created).toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    {hasReviewed ? (
+                      <button className="px-2 py-1 bg-green-600 text-white rounded shadow">
+                        Done
+                      </button>
+                    ) : (
+                      <button
+                        className="px-2 py-1 bg-rose-600 text-white rounded shadow"
+                        onClick={() => handleOpenModal(list)}
+                      >
+                        Review
+                      </button>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <button
