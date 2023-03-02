@@ -4,7 +4,7 @@ import { getSession } from "next-auth/react";
 import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 import { useState } from "react";
-import ReviewModal from "../../../components/reviewModal";
+import ReviewModal from "../../../components/ReviewModal";
 
 const WatchList = ({ initialLists }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,7 +46,7 @@ const WatchList = ({ initialLists }) => {
     }
     setIsModalOpen(true);
   };
-  
+
   return (
     <DashboardLayout>
       <div className="p-10">
