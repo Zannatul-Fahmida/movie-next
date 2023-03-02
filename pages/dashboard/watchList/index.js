@@ -9,10 +9,10 @@ import ReviewModal from "../../../components/reviewModal";
 const WatchList = ({ initialLists }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState({})
+  const [selectedMovie, setSelectedMovie] = useState("");
+  const [lists, setLists] = useState(initialLists);
 
   const imagePath = "https://image.tmdb.org/t/p/original";
-  const [lists, setLists] = useState(initialLists);
   const handleDelete = async (id) => {
     try {
       const response = await fetch("/api/watchlist", {
@@ -34,17 +34,26 @@ const WatchList = ({ initialLists }) => {
     }
   };
   const handleOpenModal = (movie) => {
-    setSelectedMovie(movie);
+    setSelectedMovie(movie.movieName);
+    // Check if the selected movie has been reviewed
+    const reviewedMovie = lists.find(
+      (list) => list.movieName === movie.movieName && list.hasReviewed
+    );
+    if (reviewedMovie) {
+      setHasReviewed(true);
+    } else {
+      setHasReviewed(false);
+    }
     setIsModalOpen(true);
   };
-
+  
   return (
     <DashboardLayout>
       <div className="p-10">
         <Toaster />
         {isModalOpen && (
           <ReviewModal
-            movieName={selectedMovie.movieName}
+            movieName={selectedMovie}
             onClose={() => setIsModalOpen(false)}
           />
         )}
@@ -96,10 +105,8 @@ const WatchList = ({ initialLists }) => {
                     {new Date(list.created).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
-                    {hasReviewed ? (
-                      <button className="px-2 py-1 bg-green-600 text-white rounded shadow">
-                        Done
-                      </button>
+                    {list.hasReviewed ? (
+                      <button className="px-2 py-1 text-gray-600">Done</button>
                     ) : (
                       <button
                         className="px-2 py-1 bg-rose-600 text-white rounded shadow"
@@ -143,15 +150,38 @@ export async function getServerSideProps(context) {
 
   const client = await clientPromise;
   const db = client.db("movieNext");
+
+  // Fetch the user's watchlist
   const lists = await db
     .collection("watchlist")
     .find({ email: session.user.email })
     .sort({ created: -1 })
     .toArray();
+  const list = lists.map((list) => list);
+
+  // Check if the user has reviewed each movie in the watchlist
+  const reviews = await db
+    .collection("reviews")
+    .find({ email: session.user.email })
+    .toArray();
+  const reviewedMovie = reviews.find(
+    (review) => review.movieName === list.movieName
+  );
+
+  // Update the `hasReviewed` property in the `list` object
+  const updatedLists = lists.map((list) => {
+    const reviewedMovie = reviews.find(
+      (review) => review.movieName === list.movieName
+    );
+    return {
+      ...list,
+      hasReviewed: reviewedMovie ? true : false,
+    };
+  });
 
   return {
     props: {
-      initialLists: JSON.parse(JSON.stringify(lists)),
+      initialLists: JSON.parse(JSON.stringify(updatedLists)),
     },
   };
 }

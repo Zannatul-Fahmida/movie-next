@@ -1,17 +1,19 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 
 const ReviewModal = ({ movieName, onClose }) => {
-  const [review, setReview] = useState("");
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
-
+  } = useForm({
+    defaultValues: {
+      movieName: `${movieName}`,
+    },
+  });
   const onSubmit = async (data) => {
+    console.log(data);
     try {
       const res = await fetch("/api/review", {
         method: "POST",
@@ -24,13 +26,15 @@ const ReviewModal = ({ movieName, onClose }) => {
 
       reset();
       toast.success("Review created successfully");
+      onClose();
     } catch (error) {
       toast.error(error.message);
     }
   };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-    <Toaster />
+      <Toaster />
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div
           className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
