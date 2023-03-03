@@ -45,7 +45,6 @@ export default function Signup() {
       } else {
         toast.success("Successfully registered and logged in");
         reset();
-        // Redirect to dashboard or other protected pages if necessary
         router.push("/dashboard");
       }
     }

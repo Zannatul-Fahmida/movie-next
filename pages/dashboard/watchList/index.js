@@ -35,7 +35,6 @@ const WatchList = ({ initialLists }) => {
   };
   const handleOpenModal = (movie) => {
     setSelectedMovie(movie.movieName);
-    // Check if the selected movie has been reviewed
     const reviewedMovie = lists.find(
       (list) => list.movieName === movie.movieName && list.hasReviewed
     );
@@ -151,7 +150,6 @@ export async function getServerSideProps(context) {
   const client = await clientPromise;
   const db = client.db("movieNext");
 
-  // Fetch the user's watchlist
   const lists = await db
     .collection("watchlist")
     .find({ email: session.user.email })
@@ -159,7 +157,6 @@ export async function getServerSideProps(context) {
     .toArray();
   const list = lists.map((list) => list);
 
-  // Check if the user has reviewed each movie in the watchlist
   const reviews = await db
     .collection("reviews")
     .find({ email: session.user.email })
@@ -168,7 +165,6 @@ export async function getServerSideProps(context) {
     (review) => review.movieName === list.movieName
   );
 
-  // Update the `hasReviewed` property in the `list` object
   const updatedLists = lists.map((list) => {
     const reviewedMovie = reviews.find(
       (review) => review.movieName === list.movieName
