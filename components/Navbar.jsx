@@ -4,7 +4,8 @@ import { BsMoonFill, BsSunFill } from "react-icons/bs";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { MdMovieFilter } from "react-icons/md";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +13,7 @@ export default function Navbar() {
   const { data: session } = useSession();
   const { resolvedTheme, setTheme } = useTheme();
   const [themeLoaded, setThemeLoaded] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (resolvedTheme != null) {
@@ -19,9 +21,31 @@ export default function Navbar() {
     }
   }, [resolvedTheme]);
 
+  // Close dropdown whenever the route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // Close dropdown when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   if (!themeLoaded) {
-    return null; 
+    return null;
   }
+
+  // Dashboard has its own sidebar navigation — hide the global navbar there
+  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/login") || pathname?.startsWith("/signup")) {
+    return null;
+  }
+
   const handleNav = () => {
     menu.classList.toggle("hidden");
   };
@@ -29,8 +53,8 @@ export default function Navbar() {
     <header>
       <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg text-gray-700 bg-white dark:bg-zinc-900">
         <div>
-          <Link className="font-bold dark:text-white" href="/">
-            Movie<span className="text-rose-700">Next</span>
+          <Link className="font-bold dark:text-white flex items-center gap-2" href="/">
+            <MdMovieFilter className="text-rose-600 text-2xl" /> Movie<span className="text-rose-700">Next</span>
           </Link>
         </div>
         <button
@@ -104,7 +128,7 @@ export default function Navbar() {
               </li>
             )}
             {session && (
-              <li className="md:px-4 py-2">
+              <li className="md:px-4 py-2 relative" ref={dropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsOpen(!isOpen)}
