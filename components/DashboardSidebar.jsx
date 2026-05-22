@@ -1,8 +1,11 @@
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import { FiLogOut } from "react-icons/fi";
+import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
 import {
   AiOutlineHome,
   AiOutlineUser,
@@ -25,6 +28,12 @@ const NAV_ITEMS = [
 const DashboardSidebar = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [themeLoaded, setThemeLoaded] = useState(false);
+
+  useEffect(() => {
+    if (resolvedTheme != null) setThemeLoaded(true);
+  }, [resolvedTheme]);
 
   const isActive = (item) =>
     item.exact ? pathname === item.href : pathname === item.href;
@@ -42,18 +51,20 @@ const DashboardSidebar = () => {
         "
       >
         {/* Brand */}
+        <div className="px-6 py-5
+            border-b border-gray-200 dark:border-zinc-700">
         <Link
           href="/"
           className="
-            flex items-center gap-2 px-6 py-5
-            border-b border-gray-200 dark:border-zinc-700
+            flex items-center gap-2 w-fit
           "
         >
-          <MdMovieFilter className="text-rose-600 text-2xl" />
+          <MdMovieFilter className="text-rose-600 dark:text-rose-500 text-2xl" />
           <span className="font-bold text-lg tracking-tight text-gray-900 dark:text-white">
-            Movie<span className="text-rose-600">Next</span>
+            Movie<span className="bg-gradient-to-r from-rose-600 to-orange-500 bg-clip-text text-transparent">Next</span>
           </span>
         </Link>
+        </div>
 
         {/* User card */}
         {session && (
@@ -137,8 +148,24 @@ const DashboardSidebar = () => {
             );
           })}
 
-          {/* Desktop Logout Button */}
-          <div className="mt-auto pt-6 pb-2">
+          {/* Desktop Theme Toggle & Logout */}
+          <div className="mt-auto pt-6 pb-2 space-y-2">
+            <button
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              className="w-full group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-white"
+            >
+              {themeLoaded && resolvedTheme === "dark" ? (
+                <>
+                  <BsSunFill className="text-lg shrink-0 transition-transform duration-200 group-hover:scale-110 text-orange-400" />
+                  <span className="flex-1 text-left">Light Mode</span>
+                </>
+              ) : (
+                <>
+                  <BsMoonStarsFill className="text-lg shrink-0 transition-transform duration-200 group-hover:scale-110 text-rose-500" />
+                  <span className="flex-1 text-left">Dark Mode</span>
+                </>
+              )}
+            </button>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="w-full group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-red-50 hover:text-red-600 dark:text-stone-400 dark:hover:bg-red-900/20 dark:hover:text-red-400"
@@ -161,17 +188,32 @@ const DashboardSidebar = () => {
       ══════════════════════════════ */}
       <div
         className="
-          md:hidden flex items-center justify-between px-4 py-3
+          md:hidden flex flex-col justify-between px-4 py-3 gap-2
           bg-white border-b border-gray-200
           dark:bg-stone-900 dark:border-stone-800
         "
       >
-        {/* Brand */}
-        <div className="flex items-center gap-2">
-          <MdMovieFilter className="text-rose-600 text-xl" />
-          <span className="font-bold tracking-tight text-gray-900 dark:text-white">
-            Movie<span className="text-rose-600">Next</span>
-          </span>
+        <div className="flex items-center justify-between">
+          {/* Brand */}
+          <div className="flex items-center gap-2">
+            <MdMovieFilter className="text-rose-600 dark:text-rose-500 text-2xl" />
+            <span className="font-bold tracking-tight text-gray-900 dark:text-white text-lg">
+              Movie<span className="bg-gradient-to-r from-rose-600 to-orange-500 bg-clip-text text-transparent">Next</span>
+            </span>
+          </div>
+
+          {/* Mobile Theme Toggle */}
+          <button
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            className="p-2 rounded-full transition-colors duration-200 bg-gray-100 hover:bg-gray-200 dark:bg-stone-800 dark:hover:bg-stone-700"
+            aria-label="Toggle Dark Mode"
+          >
+            {themeLoaded && resolvedTheme === "dark" ? (
+              <BsSunFill className="text-lg text-orange-400" />
+            ) : (
+              <BsMoonStarsFill className="text-lg text-rose-500" />
+            )}
+          </button>
         </div>
 
         {/* Icon-only nav */}

@@ -62,7 +62,7 @@ const Review = () => {
 
         {/* Header */}
         <div className="mb-10 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 shadow-sm">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 shadow-sm shrink-0">
             <FiStar className="w-8 h-8" />
           </div>
           <div>
