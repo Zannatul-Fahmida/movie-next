@@ -140,7 +140,7 @@ export default function Login() {
             </div>
 
             <p className="mt-8 text-center text-sm text-gray-600 dark:text-stone-400">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/signup" className="font-bold text-rose-600 hover:text-rose-500 transition-colors">
                 Sign up here
               </Link>
@@ -174,7 +174,7 @@ export default function Login() {
                 ★ ★ ★ ★ ★
               </div>
               <p className="text-sm italic text-rose-50 font-medium">
-                "The cleanest way to organize my binge-watching. The dashboard is absolutely stunning."
+                &quot;The cleanest way to organize my binge-watching. The dashboard is absolutely stunning.&quot;
               </p>
             </div>
           </div>

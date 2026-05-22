@@ -97,7 +97,7 @@ export default function Signup() {
 
           <div className="relative z-10 mt-12 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
             <p className="text-sm italic text-rose-50 font-medium">
-              "MovieNext completely changed how I find things to watch. The AI recommendations are scary accurate!"
+              &quot;MovieNext completely changed how I find things to watch. The AI recommendations are scary accurate!&quot;
             </p>
             <div className="flex items-center gap-3 mt-4">
               <div className="w-8 h-8 rounded-full bg-rose-300"></div>
@@ -114,7 +114,7 @@ export default function Signup() {
           <div className="max-w-md w-full mx-auto">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Create an account</h3>
             <p className="text-gray-500 dark:text-stone-400 text-sm mb-8">
-              Join thousands of movie lovers. It's completely free.
+              Join thousands of movie lovers. It&apos;s completely free.
             </p>
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>

@@ -1,5 +1,6 @@
 import DashboardLayout from "../DashboardLayout";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useState } from "react";
 import EditProfile from "../../../components/EditProfile";
 import { FiEdit3, FiMail, FiUser } from "react-icons/fi";
@@ -23,10 +24,12 @@ const Profile = () => {
           <div className="absolute -bottom-12 left-8 md:left-12 flex items-end">
             <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full border-4 border-white dark:border-stone-950 bg-stone-200 overflow-hidden shadow-xl">
               {session?.user?.image ? (
-                <img
+                <Image
                   src={session.user.image}
                   alt="Profile"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="144px"
+                  className="object-cover"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-rose-600 text-white text-5xl font-bold">

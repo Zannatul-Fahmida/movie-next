@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { MdMovieFilter } from "react-icons/md";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -132,14 +133,14 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsOpen(!isOpen)}
-                  className="inline-flex justify-center rounded-full border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-rose-500"
+                  className="inline-flex justify-center rounded-full border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-rose-500 overflow-hidden relative w-10 h-10"
                 >
-                  <img
-                    className="w-10 h-10 rounded-full"
-                    src={
-                      session?.user?.image
-                    }
+                  <Image
+                    src={session?.user?.image}
                     alt="profile picture"
+                    fill
+                    sizes="40px"
+                    className="object-cover"
                   />
                 </button>
                 {isOpen ? (

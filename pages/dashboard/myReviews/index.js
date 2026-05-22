@@ -61,7 +61,7 @@ const MyReviews = ({ initialReviews }) => {
             <FiMessageSquare className="w-16 h-16 text-gray-300 dark:text-stone-700 mb-4" />
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">No reviews yet</h3>
             <p className="text-gray-500 mt-2 text-center max-w-sm">
-              You haven't written any reviews. Go to your watchlist to start reviewing!
+              You haven&apos;t written any reviews. Go to your watchlist to start reviewing!
             </p>
           </div>
         ) : (
@@ -114,7 +114,7 @@ const MyReviews = ({ initialReviews }) => {
                 {/* Description snippet */}
                 <div className="flex-1 mb-4">
                   <p className="text-gray-600 dark:text-gray-300 text-sm italic leading-relaxed line-clamp-4 relative">
-                    <span className="text-3xl text-gray-200 dark:text-stone-700 absolute -top-3 -left-2 select-none">"</span>
+                    <span className="text-3xl text-gray-200 dark:text-stone-700 absolute -top-3 -left-2 select-none">&quot;</span>
                     &nbsp;&nbsp;&nbsp;{review.description}
                   </p>
                 </div>

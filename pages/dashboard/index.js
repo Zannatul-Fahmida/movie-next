@@ -95,7 +95,7 @@ const Dashboard = ({ stats, ratingDistribution, watchlistActivity }) => {
             Overview
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Welcome back! Here's what's happening with your account today.
+            Welcome back! Here&apos;s what&apos;s happening with your account today.
           </p>
         </div>
 
