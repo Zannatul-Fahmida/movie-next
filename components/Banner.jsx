@@ -25,10 +25,12 @@ export default function Banner() {
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-rose-900/40 via-black to-black z-10 dark:from-rose-900/40 dark:via-stone-950 dark:to-stone-950"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-orange-900/20 via-transparent to-transparent z-10"></div>
-        <img
+        <Image
           src="https://image.tmdb.org/t/p/original/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg"
           alt="Cinematic Background"
-          className="w-full h-full object-cover opacity-40 dark:opacity-30 scale-105 animate-pulse-slow"
+          fill
+          unoptimized
+          className="object-cover opacity-40 dark:opacity-30 scale-105 animate-pulse-slow"
         />
         {/* Abstract floating orbs */}
         <div className="absolute top-[20%] left-[10%] w-72 h-72 bg-rose-600/30 rounded-full blur-[120px] mix-blend-screen animate-blob z-20"></div>
@@ -89,7 +91,7 @@ export default function Banner() {
             {/* Main Poster */}
             <div className="absolute z-30 w-64 h-96 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/20 overflow-hidden bg-stone-900 [transform:translateZ(50px)] hover:scale-105 transition-transform duration-500">
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
-              <img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" className="w-full h-full object-cover" alt="Movie Poster" />
+              <Image src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" className="object-cover" fill unoptimized alt="Movie Poster" />
               <div className="absolute bottom-4 left-4 z-20">
                 <div className="flex text-yellow-400 text-sm mb-1">
                   <FiStar className="fill-current" /><FiStar className="fill-current" /><FiStar className="fill-current" /><FiStar className="fill-current" /><FiStar className="fill-current" />
@@ -100,12 +102,12 @@ export default function Banner() {
 
             {/* Poster Behind Left */}
             <div className="absolute z-20 w-56 h-80 rounded-2xl shadow-2xl border border-white/10 overflow-hidden bg-stone-900 [transform:translateX(-120px)_translateY(-40px)_translateZ(-50px)_rotate(-5deg)] opacity-80 blur-[2px] hover:blur-none hover:opacity-100 transition-all duration-500">
-              <img src="https://image.tmdb.org/t/p/w500/A4j8S6moJS2zNtRR8oWF08gRnL5.jpg" className="w-full h-full object-cover" alt="Movie Poster" />
+              <Image src="https://image.tmdb.org/t/p/w500/A4j8S6moJS2zNtRR8oWF08gRnL5.jpg" className="object-cover" fill unoptimized alt="Movie Poster" />
             </div>
 
             {/* Poster Behind Right */}
             <div className="absolute z-10 w-56 h-80 rounded-2xl shadow-2xl border border-white/10 overflow-hidden bg-stone-900 [transform:translateX(120px)_translateY(40px)_translateZ(-100px)_rotate(5deg)] opacity-60 blur-[3px] hover:blur-none hover:opacity-100 hover:z-40 transition-all duration-500">
-              <img src="https://image.tmdb.org/t/p/w500/m2zXTuNPkywu4HUNO9B3zC9sCS.jpg" className="w-full h-full object-cover" alt="Movie Poster" />
+              <Image src="https://image.tmdb.org/t/p/w500/m2zXTuNPkywu4HUNO9B3zC9sCS.jpg" className="object-cover" fill unoptimized alt="Movie Poster" />
             </div>
 
             {/* Floating Glass Data Card */}

@@ -87,7 +87,7 @@ const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
             </h1>
             {movies.tagline && (
               <p className="text-xl italic text-gray-500 dark:text-stone-400 mb-6 font-medium">
-                "{movies.tagline}"
+                &quot;{movies.tagline}&quot;
               </p>
             )}
 
@@ -189,7 +189,7 @@ const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
                     </div>
                   </div>
                   <p className="text-gray-600 dark:text-stone-300 text-sm leading-relaxed">
-                    "{review.description}"
+                    &quot;{review.description}&quot;
                   </p>
                 </div>
               ))}
