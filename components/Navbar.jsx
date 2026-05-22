@@ -53,8 +53,8 @@ export default function Navbar() {
     <header>
       <nav className="flex flex-wrap items-center justify-between w-full py-4 md:py-0 px-4 text-lg text-gray-700 bg-white dark:bg-zinc-900">
         <div>
-          <Link className="font-bold dark:text-white flex items-center gap-2" href="/">
-            <MdMovieFilter className="text-rose-600 text-2xl" /> Movie<span className="text-rose-700">Next</span>
+          <Link className="font-bold dark:text-white flex items-center" href="/">
+            <MdMovieFilter className="text-rose-600 text-2xl mr-2" /> Movie<span className="text-rose-700">Next</span>
           </Link>
         </div>
         <button
