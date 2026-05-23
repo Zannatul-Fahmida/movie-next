@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "../DashboardLayout";
-import { getSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { AiOutlineArrowLeft, AiOutlineCheckCircle, AiOutlineCloseCircle, AiOutlineReload } from "react-icons/ai";
+import { AiOutlineArrowLeft, AiOutlineCheckCircle, AiOutlineCloseCircle, AiOutlineReload, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const TMDB_IMAGE = "https://image.tmdb.org/t/p/w500";
 
@@ -15,12 +14,14 @@ const GenreChallenge = ({ movies, genres }) => {
   const [gameOver, setGameOver] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [correctGenre, setCorrectGenre] = useState(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const maxRounds = 5;
 
   const generateRound = () => {
     setSelectedAnswer(null);
     setCorrectGenre(null);
+    setImageLoaded(false);
 
     if (round > maxRounds) {
       setGameOver(true);
@@ -114,55 +115,68 @@ const GenreChallenge = ({ movies, genres }) => {
 
           {!gameOver && currentMovie ? (
             <div className="bg-emerald-900/40 backdrop-blur-xl border border-emerald-700/50 rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up flex flex-col md:flex-row">
-              <div className="relative w-full md:w-1/2 h-96 md:h-auto bg-black flex items-center justify-center p-8">
+              <div className="relative w-full md:w-1/2 h-96 md:h-auto dark:bg-black bg-stone-100 flex items-center justify-center p-8">
                 <div className="absolute top-4 left-4 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider z-20 shadow-md">
                   Round {round} of {maxRounds}
                 </div>
                 {/* Poster */}
-                <div className="relative w-full max-w-[240px] aspect-[2/3] shadow-2xl rounded-xl overflow-hidden group">
+                <div className="relative w-full max-w-[240px] aspect-[2/3] shadow-2xl rounded-xl overflow-hidden group bg-emerald-950/50">
+                  {!imageLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center z-20">
+                      <AiOutlineLoading3Quarters className="animate-spin text-4xl text-emerald-500" />
+                    </div>
+                  )}
                   <Image 
+                    key={currentMovie.id}
                     src={TMDB_IMAGE + currentMovie.poster_path} 
                     alt="Guess the genre" 
                     fill 
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className={`object-cover transition-all duration-700 ${imageLoaded ? 'opacity-100 group-hover:scale-105' : 'opacity-0'}`}
                     priority
+                    onLoad={() => setImageLoaded(true)}
                   />
                   {/* Overlay to blur title slightly or just look cool */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-transparent opacity-60" />
+                  <div className={`absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-transparent to-transparent transition-opacity duration-300 ${imageLoaded ? 'opacity-60' : 'opacity-0'}`} />
                 </div>
               </div>
 
               <div className="p-8 md:p-12 w-full md:w-1/2 flex flex-col justify-center">
                 <h2 className="text-3xl font-bold text-white mb-8">What is the primary genre?</h2>
                 <div className="flex flex-col gap-4">
-                  {options.map((opt) => {
-                    let btnClass = "bg-emerald-950 hover:bg-emerald-800 border-emerald-800/50 text-emerald-100";
-                    let Icon = null;
+                  {!imageLoaded ? (
+                    Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="p-5 rounded-2xl border-2 border-transparent bg-emerald-950/50 animate-pulse h-[72px]" />
+                    ))
+                  ) : (
+                    options.map((opt) => {
+                      let btnClass = "bg-emerald-950 hover:bg-emerald-800 border-emerald-800/50 text-emerald-100";
+                      let Icon = null;
 
-                    if (selectedAnswer) {
-                      if (opt.id === correctGenre.id) {
-                        btnClass = "bg-green-600 border-green-500 text-white"; // Correct
-                        Icon = AiOutlineCheckCircle;
-                      } else if (selectedAnswer.id === opt.id) {
-                        btnClass = "bg-red-600 border-red-500 text-white"; // Wrong
-                        Icon = AiOutlineCloseCircle;
-                      } else {
-                        btnClass = "bg-emerald-950 border-emerald-900 text-emerald-700 opacity-50"; // Fade
+                      if (selectedAnswer) {
+                        if (opt.id === correctGenre.id) {
+                          btnClass = "bg-green-600 border-green-500 text-white"; // Correct
+                          Icon = AiOutlineCheckCircle;
+                        } else if (selectedAnswer.id === opt.id) {
+                          btnClass = "bg-red-600 border-red-500 text-white"; // Wrong
+                          Icon = AiOutlineCloseCircle;
+                        } else {
+                          btnClass = "bg-emerald-950 border-emerald-900 text-emerald-700 opacity-50"; // Fade
+                        }
                       }
-                    }
 
-                    return (
-                      <button
-                        key={opt.id}
-                        onClick={() => handleSelect(opt)}
-                        disabled={!!selectedAnswer}
-                        className={`p-5 rounded-2xl border-2 transition-all duration-300 font-semibold text-lg flex items-center justify-between ${btnClass}`}
-                      >
-                        {opt.name}
-                        {Icon && <Icon className="text-2xl animate-bounce" />}
-                      </button>
-                    );
-                  })}
+                      return (
+                        <button
+                          key={opt.id}
+                          onClick={() => handleSelect(opt)}
+                          disabled={!!selectedAnswer}
+                          className={`p-5 rounded-2xl border-2 transition-all duration-300 font-semibold text-lg flex items-center justify-between ${btnClass}`}
+                        >
+                          {opt.name}
+                          {Icon && <Icon className="text-2xl animate-bounce" />}
+                        </button>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             </div>
@@ -194,31 +208,3 @@ const GenreChallenge = ({ movies, genres }) => {
 };
 
 export default GenreChallenge;
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  if (!session) return { redirect: { destination: "/login", permanent: false } };
-
-  try {
-    const TMDB_KEY = process.env.API_KEY;
-    
-    // Fetch genres and movies
-    const [genresRes, moviesRes] = await Promise.all([
-      fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB_KEY}`),
-      fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}&page=${Math.floor(Math.random() * 5) + 1}`) // random page 1-5 for variety
-    ]);
-    
-    const genresData = await genresRes.json();
-    const moviesData = await moviesRes.json();
-
-    const genres = genresData.genres || [];
-    const movies = (moviesData.results || []).filter(m => m.poster_path && m.genre_ids?.length > 0);
-
-    return {
-      props: { genres, movies },
-    };
-  } catch (err) {
-    console.error("Genre challenge error:", err);
-    return { props: { genres: [], movies: [] } };
-  }
-}

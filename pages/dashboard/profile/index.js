@@ -1,4 +1,4 @@
-import DashboardLayout from "../DashboardLayout";
+import DashboardLayout from "../../../components/DashboardLayout";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";

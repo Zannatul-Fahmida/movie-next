@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import DashboardLayout from "../DashboardLayout";
+import DashboardLayout from "../../../components/DashboardLayout";
 import { toast, Toaster } from "react-hot-toast";
 import { FiFilm, FiAlignLeft, FiSend, FiStar } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";

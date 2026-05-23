@@ -1,4 +1,4 @@
-import DashboardLayout from "./DashboardLayout";
+import DashboardLayout from "../../components/DashboardLayout";
 import { getSession } from "next-auth/react";
 import clientPromise from "../../lib/mongodb";
 import { AiOutlineHeart, AiOutlineStar, AiOutlineVideoCamera, AiOutlineCalendar, AiOutlineCompass } from "react-icons/ai";

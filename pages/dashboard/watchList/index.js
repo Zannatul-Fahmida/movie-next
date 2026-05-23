@@ -1,5 +1,5 @@
 import clientPromise from "../../../lib/mongodb";
-import DashboardLayout from "../DashboardLayout";
+import DashboardLayout from "../../../components/DashboardLayout";
 import { getSession } from "next-auth/react";
 import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";

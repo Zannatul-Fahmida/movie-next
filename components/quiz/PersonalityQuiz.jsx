@@ -1,6 +1,5 @@
 import { useState } from "react";
 import DashboardLayout from "../DashboardLayout";
-import { getSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { AiOutlineArrowRight, AiOutlineLoading3Quarters, AiOutlineReload, AiOutlineArrowLeft } from "react-icons/ai";
@@ -209,7 +208,7 @@ const PersonalityQuiz = () => {
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Why this matches you:</h3>
                   <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed mb-8 italic border-l-4 border-rose-500 pl-4 py-1">
-                    "{match.reason}"
+                    &quot;{match.reason}&quot;
                   </p>
                   
                   <div className="flex flex-wrap gap-4">
@@ -258,9 +257,3 @@ const PersonalityQuiz = () => {
 };
 
 export default PersonalityQuiz;
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  if (!session) return { redirect: { destination: "/login", permanent: false } };
-  return { props: {} };
-}

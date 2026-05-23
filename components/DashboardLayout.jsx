@@ -1,6 +1,6 @@
-import Loading from "../../components/Loading";
-import DashboardSidebar from "../../components/DashboardSidebar";
-import withAuth from "../../hoc/withAuth";
+import Loading from "./Loading";
+import DashboardSidebar from "./DashboardSidebar";
+import withAuth from "../hoc/withAuth";
 import { useSession } from "next-auth/react";
 
 const DashboardLayout = ({ children }) => {

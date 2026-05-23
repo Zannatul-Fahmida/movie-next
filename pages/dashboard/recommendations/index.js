@@ -1,5 +1,5 @@
 import { getSession } from "next-auth/react";
-import DashboardLayout from "../DashboardLayout";
+import DashboardLayout from "../../../components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
 import { AiOutlineRobot } from "react-icons/ai";

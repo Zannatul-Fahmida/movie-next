@@ -1,5 +1,5 @@
 import { useState } from "react";
-import DashboardLayout from "../DashboardLayout";
+import DashboardLayout from "../../../components/DashboardLayout";
 import { getSession } from "next-auth/react";
 import Image from "next/image";
 import { AiOutlineSmile, AiOutlineSend, AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -63,8 +63,8 @@ const MoodDetector = () => {
             AI Mood Matcher
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-center text-lg max-w-2xl mb-10">
-            Tell me how you're feeling or what you're craving. 
-            <br className="hidden md:block"/> "I'm heartbroken," "Need a mind-bending sci-fi," or "Just want to laugh."
+            Tell me how you&apos;re feeling or what you&apos;re craving. 
+            <br className="hidden md:block"/> &quot;I&apos;m heartbroken,&quot; &quot;Need a mind-bending sci-fi,&quot; or &quot;Just want to laugh.&quot;
           </p>
 
           {/* Input Area (Glassmorphism) */}
@@ -163,7 +163,7 @@ const MoodDetector = () => {
 
                     <div className="p-5 flex-1 flex flex-col justify-between bg-white dark:bg-stone-900/80">
                       <p className="text-sm text-gray-600 dark:text-gray-300 italic leading-relaxed">
-                        "{rec.reason}"
+                        &quot;{rec.reason}&quot;
                       </p>
                     </div>
 
