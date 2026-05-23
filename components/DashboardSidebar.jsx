@@ -13,6 +13,8 @@ import {
   AiOutlineOrderedList,
   AiOutlineHeart,
   AiOutlineRobot,
+  AiOutlineSmile,
+  AiOutlineTrophy,
 } from "react-icons/ai";
 import { MdMovieFilter } from "react-icons/md";
 
@@ -23,6 +25,8 @@ const NAV_ITEMS = [
   { href: "/dashboard/myReviews",    label: "My Reviews",   icon: AiOutlineOrderedList },
   { href: "/dashboard/watchList",    label: "Watch List",   icon: AiOutlineHeart },
   { href: "/dashboard/recommendations", label: "AI Picks",  icon: AiOutlineRobot, badge: "AI" },
+  { href: "/dashboard/mood",         label: "Mood Matcher", icon: AiOutlineSmile, badge: "NEW" },
+  { href: "/dashboard/quiz",         label: "Movie Quizzes",icon: AiOutlineTrophy, badge: "PLAY" },
 ];
 
 const DashboardSidebar = () => {
@@ -46,7 +50,7 @@ const DashboardSidebar = () => {
       <aside
         className="
           hidden md:flex flex-col w-64 h-screen sticky top-0 overflow-y-auto shrink-0
-          bg-white border-r border-gray-200
+          bg-white border-r border-gray-200 custom-scrollbar
           dark:bg-gradient-to-b dark:from-zinc-800 dark:to-zinc-900 dark:border-zinc-700
         "
       >

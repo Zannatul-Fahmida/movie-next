@@ -91,8 +91,8 @@ export default function ShowsPage({ initialShows }) {
       {/* ── Hero Header ── */}
       <div className="relative overflow-hidden bg-white dark:bg-stone-900 pt-28 pb-16 border-b border-gray-100 dark:border-stone-800">
         {/* Background glow orbs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/10 dark:bg-violet-600/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-10 right-1/4 w-64 h-64 bg-indigo-500/10 dark:bg-indigo-600/15 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-rose-500/10 dark:bg-rose-600/20 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-10 right-1/4 w-64 h-64 bg-pink-500/10 dark:bg-pink-600/15 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           {/* Category Toggle Tabs */}
@@ -104,11 +104,10 @@ export default function ShowsPage({ initialShows }) {
                 <button
                   key={cat.value}
                   onClick={() => handleCategoryChange(cat.value)}
-                  className={`relative flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
-                    active
-                      ? "bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-lg shadow-violet-500/30"
+                  className={`relative flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${active
+                      ? "bg-gradient-to-r from-rose-600 to-pink-500 text-white shadow-lg shadow-rose-500/30"
                       : "text-gray-500 hover:text-gray-900 dark:text-stone-400 dark:hover:text-white"
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span className="hidden sm:inline">{cat.label}</span>
@@ -122,12 +121,12 @@ export default function ShowsPage({ initialShows }) {
           <h1 className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white tracking-tight mb-4 leading-none">
             {category === "popular" ? (
               <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-indigo-400">Popular</span>{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-400">Popular</span>{" "}
                 Shows
               </>
             ) : (
               <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-l from-violet-500 to-indigo-400">Top Rated</span>{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-l from-rose-500 to-pink-400">Top Rated</span>{" "}
                 Shows
               </>
             )}
@@ -195,7 +194,7 @@ export default function ShowsPage({ initialShows }) {
             {filteredShows.map((show) => (
               <Link
                 key={show.id}
-                href={`/movies/${show.id}?category=${category === "popular" ? "popularShows" : "topRatedShows"}`}
+                href={`/shows/${show.id}?category=${category === "popular" ? "popularShows" : "topRatedShows"}`}
                 className="group flex flex-col"
               >
                 {/* Poster */}

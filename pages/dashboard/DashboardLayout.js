@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }) => {
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden ">
       <DashboardSidebar />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto custom-scrollbar">
         {children}
       </main>
     </div>
