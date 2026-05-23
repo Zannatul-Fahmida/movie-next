@@ -194,7 +194,7 @@ export default function ShowsPage({ initialShows }) {
             {filteredShows.map((show) => (
               <Link
                 key={show.id}
-                href={`/shows/${show.id}?category=${category === "popular" ? "popularShows" : "topRatedShows"}`}
+                href={`/movies/${show.id}?category=${category === "popular" ? "popularShows" : "topRatedShows"}`}
                 className="group flex flex-col"
               >
                 {/* Poster */}
