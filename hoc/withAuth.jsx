@@ -1,18 +1,22 @@
 import { getSession } from "next-auth/react";
 import Loading from "../components/Loading";
 import { useSession } from "next-auth/react";
-import Login from "../pages/login";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function withAuth(WrappedComponent) {
   return function ProtectedRoute(props) {
-    const { data: session, loading } = useSession();
+    const { data: session, status } = useSession();
     const router = useRouter();
 
-    if (loading) {
+    useEffect(() => {
+      if (status === "unauthenticated") {
+        router.push(`/login?callbackUrl=${encodeURIComponent(router.asPath)}`);
+      }
+    }, [status, router]);
+
+    if (status === "loading" || status === "unauthenticated") {
       return <Loading />;
-    } else if (!session) {
-      return <Login />;
     }
 
     return <WrappedComponent {...props} />;
@@ -25,7 +29,7 @@ export async function getServerSideProps(context) {
   if (!session) {
     return {
       redirect: {
-        destination: "/login",
+        destination: `/login?callbackUrl=${encodeURIComponent(context.resolvedUrl)}`,
         permanent: false,
       },
     };

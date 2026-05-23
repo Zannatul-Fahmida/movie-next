@@ -22,7 +22,8 @@ export default function Login() {
 
   useEffect(() => {
     if (session) {
-      router.push("/dashboard");
+      const callbackUrl = router.query.callbackUrl || router.query.redirect || "/dashboard";
+      router.push(callbackUrl);
     }
   }, [session, router]);
 
@@ -37,8 +38,8 @@ export default function Login() {
       if (!login?.error) {
         reset();
         toast.success("Successfully logged in");
-        const redirect = router.query.redirect || "/dashboard";
-        router.push(redirect);
+        const callbackUrl = router.query.callbackUrl || router.query.redirect || "/dashboard";
+        router.push(callbackUrl);
       } else {
         toast.error("Invalid credentials, please try again.");
       }
