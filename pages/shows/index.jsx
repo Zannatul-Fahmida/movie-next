@@ -197,7 +197,7 @@ export default function ShowsPage({ initialShows, initialWatchlist = [] }) {
             <p className="text-gray-500 dark:text-stone-400 mb-6">Nothing matched &quot;{searchQuery}&quot;</p>
             <button
               onClick={() => setSearchQuery("")}
-              className="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl transition-colors"
+              className="px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition-colors"
             >
               Clear Search
             </button>
@@ -250,7 +250,7 @@ export default function ShowsPage({ initialShows, initialWatchlist = [] }) {
                       <button
                         onClick={(e) => handleAddToWatchlist(e, show)}
                         disabled={addingId === show.id}
-                        className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white text-xs font-black py-2.5 rounded-xl transition-all shadow-lg shadow-violet-900/50"
+                        className="w-full flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-60 text-white text-xs font-black py-2.5 rounded-xl transition-all shadow-lg shadow-rose-900/50"
                       >
                         <FiBookmark className="w-3.5 h-3.5" />
                         {addingId === show.id ? "Adding…" : "Watchlist"}
@@ -261,7 +261,7 @@ export default function ShowsPage({ initialShows, initialWatchlist = [] }) {
 
                 {/* Info */}
                 <div className="mt-3 px-0.5">
-                  <h2 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors leading-tight">
+                  <h2 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors leading-tight">
                     {show.name}
                   </h2>
                   <div className="flex items-center gap-2 mt-1">
