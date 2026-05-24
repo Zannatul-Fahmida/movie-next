@@ -2,9 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { FiSearch, FiX, FiStar, FiTrendingUp, FiAward, FiBookmark } from "react-icons/fi";
+import { FiSearch, FiX, FiStar, FiTrendingUp, FiAward, FiBookmark, FiChevronLeft, FiChevronRight, FiCheckCircle } from "react-icons/fi";
 import { MdLiveTv } from "react-icons/md";
 import { toast } from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import HeroHeader from "../../components/HeroHeader";
 
 const Toaster = dynamic(() => import("react-hot-toast").then((m) => m.Toaster), { ssr: false });
 
@@ -15,13 +17,41 @@ const CATEGORIES = [
 
 const imagePath = "https://image.tmdb.org/t/p/w500";
 
-export default function ShowsPage({ initialShows }) {
+export default function ShowsPage({ initialShows, initialWatchlist = [] }) {
+  const { data: session } = useSession();
   const [category, setCategory] = useState("popular");
   const [shows, setShows] = useState(initialShows);
   const [filteredShows, setFilteredShows] = useState(initialShows);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [addingId, setAddingId] = useState(null);
+
+  // Track watchlist locally for instant UI updates
+  const [localWatchlist, setLocalWatchlist] = useState(
+    new Set(initialWatchlist.map(w => w.movieName))
+  );
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 18;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredShows]);
+
+  const totalPages = Math.ceil(filteredShows.length / ITEMS_PER_PAGE);
+  const currentShows = filteredShows.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage((p) => p - 1);
+  };
 
   const fetchShows = useCallback(async (cat) => {
     setLoading(true);
@@ -37,6 +67,33 @@ export default function ShowsPage({ initialShows }) {
       setLoading(false);
     }
   }, []);
+
+  const handleVoiceSearch = async (transcript) => {
+    setLoading(true);
+    setCategory("ai_search");
+    
+    try {
+      const res = await fetch("/api/ai/voice-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcript, type: "shows" }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.message || "Voice search failed");
+      
+      setShows(data.results || []);
+      setFilteredShows(data.results || []);
+      setSearchQuery("");
+      toast.success("Found some great matches!");
+    } catch (err) {
+      toast.error(err.message);
+      setCategory("popular");
+      fetchShows("popular");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCategoryChange = (val) => {
     if (val === category) return;
@@ -65,9 +122,15 @@ export default function ShowsPage({ initialShows }) {
   const handleAddToWatchlist = async (e, show) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!session) {
+      toast.error("Please login to add to watchlist!");
+      return;
+    }
+
     setAddingId(show.id);
     try {
-      await fetch("/api/watchlist", {
+      const res = await fetch("/api/watchlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -76,6 +139,13 @@ export default function ShowsPage({ initialShows }) {
           releaseDate: show.first_air_date,
         }),
       });
+      if (res.status === 409) {
+        setLocalWatchlist(prev => new Set(prev).add(show.name));
+        toast.error("Already in your watchlist!");
+        return;
+      }
+      if (!res.ok) throw new Error("Failed to add to watchlist.");
+      setLocalWatchlist(prev => new Set(prev).add(show.name));
       toast.success(`"${show.name}" added to watchlist!`);
     } catch {
       toast.error("Failed to add to watchlist.");
@@ -89,73 +159,18 @@ export default function ShowsPage({ initialShows }) {
       <Toaster position="bottom-right" />
 
       {/* ── Hero Header ── */}
-      <div className="relative overflow-hidden bg-white dark:bg-stone-900 pt-28 pb-16 border-b border-gray-100 dark:border-stone-800">
-        {/* Background glow orbs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-rose-500/10 dark:bg-rose-600/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-10 right-1/4 w-64 h-64 bg-pink-500/10 dark:bg-pink-600/15 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
-          {/* Category Toggle Tabs */}
-          <div className="inline-flex items-center bg-gray-100 dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-1.5 mb-8">
-            {CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              const active = category === cat.value;
-              return (
-                <button
-                  key={cat.value}
-                  onClick={() => handleCategoryChange(cat.value)}
-                  className={`relative flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${active
-                      ? "bg-gradient-to-r from-rose-600 to-pink-500 text-white shadow-lg shadow-rose-500/30"
-                      : "text-gray-500 hover:text-gray-900 dark:text-stone-400 dark:hover:text-white"
-                    }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{cat.label}</span>
-                  <span className="sm:hidden">{cat.shortLabel}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Heading */}
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white tracking-tight mb-4 leading-none">
-            {category === "popular" ? (
-              <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-400">Popular</span>{" "}
-                Shows
-              </>
-            ) : (
-              <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-l from-rose-500 to-pink-400">Top Rated</span>{" "}
-                Shows
-              </>
-            )}
-          </h1>
-          <p className="text-gray-400 dark:text-stone-400 text-lg mb-10">
-            {CATEGORIES.find((c) => c.value === category)?.desc} · {filteredShows.length} titles
-          </p>
-
-          {/* Search Bar */}
-          <div className="relative max-w-xl mx-auto group">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by title or year…"
-              className="w-full pl-14 pr-12 py-4 bg-white dark:bg-white/10 dark:backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-stone-400 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm font-medium shadow-sm"
-            />
-            <FiSearch className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-stone-200 group-focus-within:!text-violet-500 dark:group-focus-within:!text-violet-400 transition-colors" />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-gray-400 hover:text-gray-700 dark:text-stone-400 dark:hover:text-white transition-colors"
-              >
-                <FiX className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <HeroHeader
+        type="shows"
+        categories={CATEGORIES}
+        activeCategory={category}
+        onCategoryChange={handleCategoryChange}
+        titleSuffix="Shows"
+        itemCount={filteredShows.length}
+        searchQuery={searchQuery}
+        onSearchChange={(e) => setSearchQuery(e.target.value)}
+        onSearchClear={() => setSearchQuery("")}
+        onVoiceSearchComplete={handleVoiceSearch}
+      />
 
       {/* ── Main Content ── */}
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -188,26 +203,26 @@ export default function ShowsPage({ initialShows }) {
             </button>
           </div>
         ) : (
-
-          /* Shows Grid */
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-5 gap-y-8">
-            {filteredShows.map((show) => (
-              <Link
-                key={show.id}
-                href={`/movies/${show.id}?category=${category === "popular" ? "popularShows" : "topRatedShows"}`}
-                className="group flex flex-col"
-              >
-                {/* Poster */}
-                <div className="relative aspect-[2/3] rounded-2xl overflow-hidden bg-stone-800 shadow-md group-hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.4)] transition-all duration-500 group-hover:-translate-y-2">
-                  {show.poster_path ? (
-                    <Image
-                      src={imagePath + show.poster_path}
-                      alt={show.name}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 17vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                  ) : (
+          /* Show Grid */
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-5 gap-y-8">
+              {currentShows.map((show) => (
+                <Link
+                  key={show.id}
+                  href={`/movies/${show.id}?category=${category === "popular" ? "popularShows" : "topRatedShows"}`}
+                  className="group flex flex-col"
+                >
+                  {/* Poster */}
+                  <div className="relative aspect-[2/3] rounded-2xl overflow-hidden bg-stone-800 shadow-md group-hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.4)] transition-all duration-500 group-hover:-translate-y-2">
+                    {show.poster_path ? (
+                      <Image
+                        src={imagePath + show.poster_path}
+                        alt={show.name}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 17vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                    ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-stone-800">
                       <MdLiveTv className="w-16 h-16 text-stone-600" />
                     </div>
@@ -226,14 +241,21 @@ export default function ShowsPage({ initialShows }) {
 
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 p-4">
-                    <button
-                      onClick={(e) => handleAddToWatchlist(e, show)}
-                      disabled={addingId === show.id}
-                      className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white text-xs font-black py-2.5 rounded-xl transition-all shadow-lg shadow-violet-900/50"
-                    >
-                      <FiBookmark className="w-3.5 h-3.5" />
-                      {addingId === show.id ? "Adding…" : "Watchlist"}
-                    </button>
+                    {localWatchlist.has(show.name) ? (
+                      <div className="w-full flex items-center justify-center gap-2 bg-emerald-600/90 text-white text-xs font-black py-2.5 rounded-xl backdrop-blur-sm shadow-lg shadow-emerald-900/50">
+                        <FiCheckCircle className="w-3.5 h-3.5" />
+                        In Watchlist
+                      </div>
+                    ) : (
+                      <button
+                        onClick={(e) => handleAddToWatchlist(e, show)}
+                        disabled={addingId === show.id}
+                        className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white text-xs font-black py-2.5 rounded-xl transition-all shadow-lg shadow-violet-900/50"
+                      >
+                        <FiBookmark className="w-3.5 h-3.5" />
+                        {addingId === show.id ? "Adding…" : "Watchlist"}
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -258,22 +280,87 @@ export default function ShowsPage({ initialShows }) {
                 </div>
               </Link>
             ))}
-          </div>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-4 mt-12 pb-8 animate-in fade-in duration-500 col-span-full">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 text-gray-700 dark:text-gray-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-900/30 dark:hover:border-rose-900/50 dark:hover:text-rose-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                >
+                  <FiChevronLeft className="w-5 h-5" />
+                </button>
+                
+                <div className="flex items-center gap-2">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const page = i + 1;
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-10 h-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all shadow-sm ${
+                          currentPage === page
+                            ? "bg-rose-600 text-white border border-rose-600"
+                            : "bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-stone-700"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 text-gray-700 dark:text-gray-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-900/30 dark:hover:border-rose-900/50 dark:hover:text-rose-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                >
+                  <FiChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
   );
 }
 
-export async function getServerSideProps() {
-  const res = await fetch(
-    `https://api.themoviedb.org/3/tv/popular?api_key=${process.env.API_KEY}`
-  );
-  const data = await res.json();
+import { getSession } from "next-auth/react";
+import clientPromise from "../../lib/mongodb";
+
+export async function getServerSideProps(context) {
+  const fetchPage = async (page) => {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/tv/popular?api_key=${process.env.API_KEY}&page=${page}`
+    );
+    const data = await res.json();
+    return data.results || [];
+  };
+
+  const [page1, page2, page3] = await Promise.all([
+    fetchPage(1),
+    fetchPage(2),
+    fetchPage(3),
+  ]);
+
+  let userWatchlist = [];
+  const session = await getSession(context);
+  if (session) {
+    const client = await clientPromise;
+    const db = client.db("movieNext");
+    userWatchlist = await db.collection("watchlist")
+      .find({ email: session.user.email })
+      .project({ movieName: 1, _id: 0 })
+      .toArray();
+  }
 
   return {
     props: {
-      initialShows: data.results || [],
+      initialShows: [...page1, ...page2, ...page3],
+      initialWatchlist: JSON.parse(JSON.stringify(userWatchlist)),
     },
   };
 }

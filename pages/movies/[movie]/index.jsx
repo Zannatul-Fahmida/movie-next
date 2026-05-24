@@ -3,11 +3,14 @@ import Link from "next/link";
 import Rating from "react-rating";
 import withAuth from "../../../hoc/withAuth";
 import { AiFillStar } from "react-icons/ai";
-import { FiPlayCircle, FiClock, FiCalendar, FiActivity, FiGlobe, FiChevronLeft, FiStar, FiTv } from "react-icons/fi";
+import { FiPlayCircle, FiClock, FiCalendar, FiActivity, FiGlobe, FiChevronLeft, FiStar, FiTv, FiBookmark, FiCheckCircle } from "react-icons/fi";
+import { useSession, getSession } from "next-auth/react";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 import RelatedMovie from "../../../components/RelatedMovie";
 import clientPromise from "../../../lib/mongodb";
 
-const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
+const MovieDetail = ({ movies, reviews, relatedMovies, query, initialInWatchlist }) => {
   const imagePath = "https://image.tmdb.org/t/p/original";
   const posterPath = "https://image.tmdb.org/t/p/w500";
 
@@ -15,6 +18,41 @@ const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
   const title = movies.title || movies.name;
   const releaseDate = movies.release_date || movies.first_air_date;
   const runtime = movies.runtime || (movies.episode_run_time ? movies.episode_run_time[0] : null);
+
+  const { data: session } = useSession();
+  const [isAdding, setIsAdding] = useState(false);
+  const [isAdded, setIsAdded] = useState(initialInWatchlist || false);
+
+  const handleAddToWatchlist = async () => {
+    if (!session) {
+      toast.error("Please login to add to watchlist!");
+      return;
+    }
+    setIsAdding(true);
+    try {
+      const res = await fetch("/api/watchlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          movieName: title,
+          poster: movies.poster_path,
+          releaseDate: releaseDate,
+        }),
+      });
+      if (res.status === 409) {
+        setIsAdded(true);
+        toast.error("Already in your watchlist!");
+        setIsAdding(false);
+        return;
+      }
+      if (!res.ok) throw new Error("Failed");
+      setIsAdded(true);
+      toast.success("Added to your watchlist!");
+    } catch {
+      toast.error("Failed to add to watchlist.");
+      setIsAdding(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
@@ -147,6 +185,33 @@ const MovieDetail = ({ movies, reviews, relatedMovies, query }) => {
                 {movies.overview || "No overview available."}
               </p>
             </div>
+
+            {/* Watchlist Button */}
+            <div className="flex items-center justify-center md:justify-start gap-4 mb-12">
+              <button
+                onClick={handleAddToWatchlist}
+                disabled={isAdding || isAdded}
+                className={`relative overflow-hidden flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-lg transition-all duration-500 shadow-lg ${
+                  isAdded
+                    ? "bg-emerald-500 text-white shadow-emerald-500/40 scale-105"
+                    : "bg-gradient-to-r from-rose-600 to-orange-500 text-white hover:shadow-rose-500/40 hover:scale-[1.02]"
+                }`}
+              >
+                <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                
+                {isAdded ? (
+                  <>
+                    <FiCheckCircle className="w-6 h-6 animate-[bounce_0.5s_ease-out]" />
+                    <span className="tracking-wide drop-shadow-md">Added to Watchlist!</span>
+                  </>
+                ) : (
+                  <>
+                    <FiBookmark className={`w-6 h-6 ${isAdding ? "animate-pulse" : ""}`} />
+                    <span className="tracking-wide drop-shadow-md">{isAdding ? "Adding..." : "Add to Watchlist"}</span>
+                  </>
+                )}
+              </button>
+            </div>
             
           </div>
         </div>
@@ -230,6 +295,16 @@ export async function getServerSideProps(context) {
     .find({ movieName: data.title || data.name })
     .toArray();
     
+  let inWatchlist = false;
+  const session = await getSession(context);
+  if (session) {
+    const watchlistItem = await db.collection("watchlist").findOne({
+      email: session.user.email,
+      movieName: data.title || data.name,
+    });
+    inWatchlist = !!watchlistItem;
+  }
+    
   let relatedURL;
   if (category === "popularMovies") {
     relatedURL = `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}&with_genres=${data?.genres?.[0]?.id}`;
@@ -253,6 +328,7 @@ export async function getServerSideProps(context) {
       reviews: JSON.parse(JSON.stringify(reviews)),
       relatedMovies: relatedMovies,
       query: query.category || "",
+      initialInWatchlist: inWatchlist,
     },
   };
 }

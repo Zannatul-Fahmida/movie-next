@@ -4,6 +4,10 @@ import { MongoClient, ObjectId } from "mongodb";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const session = await getSession({ req });
+    
+    if (!session) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     const { movieName, poster, releaseDate } = req.body;
 
@@ -14,6 +18,16 @@ export default async function handler(req, res) {
     });
 
     const db = client.db();
+
+    // Check if the movie is already in the user's watchlist
+    const existingEntry = await db.collection("watchlist").findOne({
+      email: session.user.email,
+      movieName,
+    });
+
+    if (existingEntry) {
+      return res.status(409).send({ message: "Movie is already in your watchlist" });
+    }
 
     await db.collection("watchlist").insertOne({
       name: session.user.name,
@@ -27,6 +41,11 @@ export default async function handler(req, res) {
     res.status(201).send({ message: "This movie is added successfully" });
   } else if (req.method === "DELETE") {
     const session = await getSession({ req });
+    
+    if (!session) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const { id } = req.body;
 
     const uri = process.env.MONGODB_URI;
