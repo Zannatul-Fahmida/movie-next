@@ -95,9 +95,9 @@ const DashboardSidebar = () => {
               <p className="text-sm font-semibold truncate text-gray-900 dark:text-white">
                 {session.user?.name ?? "User"}
               </p>
-              <p className="text-xs truncate text-gray-500 dark:text-stone-400">
+              {/* <p className="text-xs truncate text-gray-500 dark:text-stone-400">
                 {session.user?.email ?? ""}
-              </p>
+              </p> */}
             </div>
           </div>
         )}

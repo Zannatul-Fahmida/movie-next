@@ -181,12 +181,12 @@ export default function Navbar() {
               {/* Dropdown Menu */}
               {isOpen && (
                 <div className="absolute right-0 mt-4 w-64 bg-white/90 dark:bg-stone-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/40 dark:border-stone-700/50 overflow-hidden animate-in zoom-in-95 duration-200 origin-top-right">
-                  <div className="px-5 py-4 border-b border-gray-100 dark:border-stone-800">
+                  {/* <div className="px-5 py-4 border-b border-gray-100 dark:border-stone-800">
                     <p className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-stone-500 mb-1">Account</p>
                     <p className="text-sm font-extrabold text-gray-900 dark:text-white truncate">
                       {session.user.email}
                     </p>
-                  </div>
+                  </div> */}
                   <div className="p-2">
                     <Link
                       href="/dashboard"
